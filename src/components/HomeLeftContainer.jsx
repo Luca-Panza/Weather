@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import Switch from '@mui/material/Switch';
-import { useState, useEffect  } from "react"
+import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 import coatLogo from "../assets/coat.png"
 import searchIcon from "../assets/search.svg"
@@ -8,10 +9,16 @@ import searchIcon from "../assets/search.svg"
 export default function HomeLeftContainer() {
 
   const [inputValue, setInputValue] = useState('');
+  const [data, setData] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [switchTemperature, setSwitchTemperature] = useState(false);
   const [switchDarkMode, setSwitchDarkMode] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   //Código para pegar a data e hora atual
 
@@ -21,7 +28,7 @@ export default function HomeLeftContainer() {
       
       const formattedDate = now.toLocaleDateString('pt-BR', { year: 'numeric', month: 'numeric', day: 'numeric' });
       let dayOfWeek = now.toLocaleDateString('pt-BR', { weekday: 'long' });
-      dayOfWeek = `${dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1)},`; // Adicionando vírgula após o dia da semana
+      dayOfWeek = `${dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1)},`;
       
       const formattedTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       
@@ -49,31 +56,38 @@ export default function HomeLeftContainer() {
     console.log(inputValue);
     setInputValue('');
 
-    /*axios.post(`${import.meta.env.VITE_API_URL}/signIn`, {email, password})
-
-        .then((res) => {
-          setUser(res.data)
-          localStorage.removeItem("user");
-          localStorage.setItem("user", JSON.stringify(res.data));
-
-          }) 
-        .catch(e => alert(e.response.data.message));*/
-
+    const apiKey = import.meta.env.VITE_API_KEY;
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&appid=${apiKey}&units=metric`;
+  
+      axios.get(urlWeather)
+      .then(response => {
+        console.log('Temperatura Atual:', response.data);
+        setData(response.data);
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Erro ao obter a temperatura atual:', error);
+      });
     }
+
+  
 
   return (
     <>
       <HomeLeftContainerSC>
+
         <HeaderSC>
           <img src={coatLogo} alt="Logo"></img>
           <h1>Levo um casaquinho?</h1>
         </HeaderSC>
+
         <SearchBarSC>
-          <input type="text" placeholder="Procure por uma cidade" onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown} value={inputValue} ></input>
+          <input type="text" ref={inputRef} placeholder="Procure por uma cidade" onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown} value={inputValue} ></input>
           <ButtonSC type="submit" onClick={clickHandler}>
             <img src={searchIcon} alt="Search" />
           </ButtonSC>
         </SearchBarSC>
+
         <WeatherStatusSC>
           
         </WeatherStatusSC>
@@ -97,6 +111,7 @@ export default function HomeLeftContainer() {
         <FooterSC>
           <p>Todos os direitos reservados. 2023.</p>
         </FooterSC>
+        
       </HomeLeftContainerSC>
     </>
   )      
@@ -107,7 +122,6 @@ const HomeLeftContainerSC = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-
   width: 35%;
   height: 100%;
   background-color: #ffffff;
@@ -133,7 +147,6 @@ const HeaderSC = styled.header`
     width: 75%;
     font-family: 'Poppins', sans-serif;
     font-size: 3vw;
-    font-style: normal;
     font-weight: 600;
   }
 `;
@@ -162,7 +175,6 @@ const SearchBarSC = styled.div`
     color: #424243;
     font-family: Montserrat;
     font-size: 18px;
-    font-style: normal;
     font-weight: 500;
     line-height: 24px;
   }
@@ -180,37 +192,34 @@ const ButtonSC = styled.button`
 const WeatherStatusSC = styled.div`
   width: 80%;
   height: 25%;
-  background-color:yellow;
+  background-color: yellow;
   margin-top: 5%;
 `;
 
 const DayStatusSC = styled.div`
-  width: 60%;
-  height: 10%;
-  user-select: none;
-
-  text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
+  align-items: center;
+  width: 60%;
+  height: 10%;
+  text-align: center;
   color: #222;
-
+  user-select: none;
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
-  font-style: normal;
   font-weight: 400;
 `;
 
 const SwitchSC = styled.div`
-  width: 100%;
-  height: auto;
-  user-select: none;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-left:60%;
+  width: 100%;
+  height: auto;
+  margin-left: 60%;
   margin-top: 5%;
+  user-select: none;
 
   div {
     display: flex;
@@ -220,33 +229,26 @@ const SwitchSC = styled.div`
 
   label {
     color: #222;
-
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
-    font-style: normal;
     font-weight: 400;
-    line-height: 48px;
   }
 `;
 
 const FooterSC = styled.footer`
-  width: 100%;
-  height: 10%;
-  background-color:yellow;
-  margin-top: 5%;
-
-  display: flex;  
+  display: flex;
   align-items: flex-end;
   justify-content: center;
+  width: 100%;
+  height: 10%;
+  margin-top: 5%;
   user-select: none;
-  
-  p{
-    color: #222;
 
-font-family: Poppins;
-font-size: 10px;
-font-style: normal;
-font-weight: 400;
-line-height: 48px; /* 200% */
+  p {
+    color: #222;
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 48px;
   }
-  `;
+`;
