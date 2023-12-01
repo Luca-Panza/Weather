@@ -4,7 +4,7 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
 
-  const [data, setData] = useState('');
+  const [data, setData] = useState({});
   const [activeTab, setActiveTab] = useState('today');
   const [switchTemperature, setSwitchTemperature] = useState(false);
   const [switchDarkMode, setSwitchDarkMode] = useState(false);

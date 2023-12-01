@@ -1,24 +1,18 @@
-import styled from "styled-components"
-
-import HomeLeftContainer from "./components/HomeLeftContainer"
-import HomeRightContainer from "./components/HomeRightContainer"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { AppProvider } from './context/AppContext';
+import HomePage from "./pages/HomePage"
 
 export default function App() {
 
   return (
     <>
-    <HomeContainerSC>
-      <HomeLeftContainer />
-      <HomeRightContainer />
-    </HomeContainerSC>
+    <AppProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
     </>
   )
 }
-
-const HomeContainerSC = styled.div`
-  width: 100vw;
-  height:100vh;
-
-  display: flex;
-  align-items: center;
-`

@@ -1,9 +1,32 @@
 import styled from "styled-components"
-import { useState } from "react" 
+import { useState, useContext } from "react" 
+
+import { AppContext } from "../context/AppContext";
 
 export default function HomeRightContainer() {
 
   const [activeTab, setActiveTab] = useState('today');
+  const { data, switchTemperature } = useContext(AppContext);
+
+  const cityName = data?.name;
+  const cityLat = data?.coord?.lat?.toFixed(2); 
+  const cityLon = data?.coord?.lon?.toFixed(2);
+  const minTempCelsius = data?.main?.temp_min;
+  const maxTempCelsius = data?.main?.temp_max;
+  const minTemp = minTempCelsius !== undefined ? (switchTemperature ? celsiusToFahrenheit(minTempCelsius).toFixed(1) : minTempCelsius.toFixed(1)) : null;
+  const maxTemp = maxTempCelsius !== undefined ? (switchTemperature ? celsiusToFahrenheit(maxTempCelsius).toFixed(1) : maxTempCelsius.toFixed(1)) : null;
+  const humidity = data?.main?.humidity;
+  const windSpeed = data?.wind?.speed !== undefined ? (switchTemperature ? msToMph(data?.wind?.speed).toFixed(1) : data?.wind?.speed.toFixed(1)) : null;
+  const windSpeedUnit = switchTemperature ? 'mph' : 'm/s';
+  const tempUnit = switchTemperature ? '° F' : '° C';
+
+  function msToMph(speedMs) {
+    return speedMs * 2.23694;
+  }
+  
+  function celsiusToFahrenheit(tempCelsius) {
+    return (tempCelsius * 9/5) + 32;
+  }
 
   return (
     <HomeRightContainerSC>
@@ -17,33 +40,38 @@ export default function HomeRightContainer() {
         </TabText>
       </TextSC>
 
-      <CityInfoSC>
-        São Paulo
-        <CoordsSC>Lat: 44.34 Long: 10.99</CoordsSC>
-      </CityInfoSC>
+      {activeTab === 'today' && (
+        <>
+          <CityInfoSC>
+            {cityName}
+            <CoordsSC>Lat: {cityLat} Long: {cityLon}</CoordsSC>
+          </CityInfoSC>
 
-      <WeatherInfoSC>
-        <WeatherBox>
-          <WeatherTitle>Minima</WeatherTitle>
-          <WeatherData>31° C</WeatherData>
-        </WeatherBox>
-        <WeatherBox>
-          <WeatherTitle>Máxima</WeatherTitle>
-          <WeatherData>48° C</WeatherData>
-        </WeatherBox>
-        <WeatherBox>
-          <WeatherTitle>Umidade</WeatherTitle>
-          <WeatherData>64%</WeatherData>
-        </WeatherBox>
-        <WeatherBox>
-          <WeatherTitle>Velocidade do vento</WeatherTitle>
-          <WeatherData>12 m/s</WeatherData>
-        </WeatherBox>
-      </WeatherInfoSC>
+          <WeatherInfoSC>
+            <WeatherBox>
+              <WeatherTitle>Minima</WeatherTitle>
+              <WeatherData>{minTemp}{tempUnit}</WeatherData>
+            </WeatherBox>
+            <WeatherBox>
+              <WeatherTitle>Máxima</WeatherTitle>
+              <WeatherData>{maxTemp}{tempUnit}</WeatherData>
+            </WeatherBox>
+            <WeatherBox>
+              <WeatherTitle>Umidade</WeatherTitle>
+              <WeatherData>{humidity}%</WeatherData>
+            </WeatherBox>
+            <WeatherBox>
+              <WeatherTitle>Velocidade do vento</WeatherTitle>
+              <WeatherData>{windSpeed} {windSpeedUnit}</WeatherData>
+            </WeatherBox>
+          </WeatherInfoSC>
 
-      <CoatStatusSC>
-      Não, você não deve levar um casaquinho!
-      </CoatStatusSC>
+          <CoatStatusSC>
+            {minTemp <= 17 ? 'Sim, você deve levar um casaquinho!' : 'Não, você não deve levar um casaquinho!'}
+          </CoatStatusSC>
+
+        </>
+      )}
 
       <APIAttribution>
         Dados fornecidos pela <APILink href="https://openweathermap.org/api" target="_blank">Open Weather API</APILink>
@@ -64,7 +92,7 @@ const HomeRightContainerSC = styled.div`
 const TextSC = styled.div`
   display: flex;
   margin-top: 4%;
-  margin-left: 50px;
+  margin-left: 7%;
 `;
 
 const TabText = styled.span`
@@ -85,7 +113,7 @@ const TabText = styled.span`
 
 const CityInfoSC = styled.div`
   font-family: 'Poppins', sans-serif;
-  font-size: 90px;
+  font-size: 70px;
   font-style: normal;
   font-weight: 300;
   line-height: 40px;
@@ -93,6 +121,13 @@ const CityInfoSC = styled.div`
   margin-top: 5%;
   margin-left: 5%;
   user-select: none;
+  @media (max-width: 800px) {
+    font-size: 60px;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 40px; 
+  }
 `;
 
 const CoordsSC = styled.div`
@@ -102,7 +137,7 @@ const CoordsSC = styled.div`
   font-weight: 400;
   line-height: 48px;
   color: #222;
-  margin-top: 2%;
+  margin-top: 1%;
   margin-left: 1%;
   user-select: none;
 `;
@@ -137,6 +172,9 @@ const WeatherTitle = styled.span`
   font-size: 18px;
   color: #FFF;
   margin-bottom: 10px;
+  @media (max-width: 600px) {
+    font-size: 16px; 
+  }
 `;
 
 const WeatherData = styled.span`
@@ -144,6 +182,9 @@ const WeatherData = styled.span`
   font-size: 24px;
   color: #FFF;
   font-weight: bold;
+  @media (max-width: 600px) {
+    font-size: 18px; 
+  }
 `;
 
 const CoatStatusSC = styled.p`
@@ -151,7 +192,7 @@ const CoatStatusSC = styled.p`
   font-size: 16px;
   font-style: italic;
   color: #AFADAD;
-  margin-top: 50px;
+  margin-top:100px;
   margin-left: 7%;
   user-select: none;
 `;
@@ -160,7 +201,7 @@ const APIAttribution = styled.div`
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   color: #222;
-  margin-top: 20%;
+  margin-top: 15%;
   margin-left: 7%;
   font-style: normal;
   font-weight: 400;

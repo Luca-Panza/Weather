@@ -1,21 +1,32 @@
 import styled from "styled-components"
 import Switch from '@mui/material/Switch';
-import { useState, useEffect, useRef } from 'react';
+import { RotatingLines } from 'react-loader-spinner';
+import { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 
 import coatLogo from "../assets/coat.png"
 import searchIcon from "../assets/search.svg"
+import { AppContext } from "../context/AppContext";
 
 export default function HomeLeftContainer() {
 
   const [inputValue, setInputValue] = useState('');
-  const [data, setData] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [switchTemperature, setSwitchTemperature] = useState(false);
   const [switchDarkMode, setSwitchDarkMode] = useState(false);
+  const { data , setData, switchTemperature , setSwitchTemperature } = useContext(AppContext);
   const inputRef = useRef(null);
 
+  const tempUnit = switchTemperature ? '°F' : '°C';
+  const minTempCelsius = data?.main?.temp_min;
+  const minTemp = minTempCelsius !== undefined ? (switchTemperature ? celsiusToFahrenheit(minTempCelsius).toFixed(1) : minTempCelsius.toFixed(1)) : null;
+  
+  //Função para converter Celsius para Fahrenheit
+  function celsiusToFahrenheit(tempCelsius) {
+    return (tempCelsius * 9/5) + 32;
+  }
+
+  //Código para focar no input ao carregar a página
   useEffect(() => {
     inputRef.current.focus();
   }, []);
@@ -39,6 +50,36 @@ export default function HomeLeftContainer() {
     return () => clearInterval(intervalId);
   }, []);
   
+  //Código para pegar a cidade atual a partir das coordenadas
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        getCityFromCoordinates(latitude, longitude);
+      }, error => {
+        console.error("Erro ao obter localização", error);
+      });
+    } else {
+      console.log("Geolocalização não está disponível");
+    }
+  }, []);
+
+  //Código para pegar a cidade atual a partir da coordenadas
+
+  const getCityFromCoordinates = (latitude, longitude) => {
+    const geocodingApiKey = import.meta.env.VITE_GEOCODING_API_KEY;
+    const urlGeocoding = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${geocodingApiKey}`;
+  
+    axios.get(urlGeocoding)
+      .then(response => {
+        const city = response.data.results[0].components.city;
+        clickHandler(null, city);
+      })
+      .catch(error => {
+        console.error('Erro ao obter nome da cidade:', error);
+      });
+  };
 
   //Código para enviar input usando enter
 
@@ -50,27 +91,41 @@ export default function HomeLeftContainer() {
 
   //Código para enviar input usando botão
 
-  function clickHandler (e) {
-		e.preventDefault();
-
-    console.log(inputValue);
-    setInputValue('');
-
-    const apiKey = import.meta.env.VITE_API_KEY;
-    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&appid=${apiKey}&units=metric`;
+  function clickHandler(e, cityName = null) {
+    if (e) e.preventDefault();
   
-      axios.get(urlWeather)
+    const cityToSearch = cityName || inputValue;
+  
+    console.log(cityToSearch);
+    setInputValue('');
+  
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+    console.log(apiKey);
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${cityToSearch}&appid=${apiKey}&units=metric`;
+    axios.get(urlWeather)
       .then(response => {
-        console.log('Temperatura Atual:', response.data);
+        console.log(response.data);
         setData(response.data);
         console.log(data);
       })
       .catch(error => {
         console.error('Erro ao obter a temperatura atual:', error);
       });
-    }
+  }
 
+  function getWeatherDescriptionAndColor(weatherMain) {
+    const weatherTypes = {
+      Clear: { text: "Céu aberto", color: "orange" },
+      Clouds: { text: "Nublado", color: "gray" },
+      Rain: { text: "Chovendo", color: "blue" },
+      Snow: { text: "Nevando", color: "lightgray" },
+      Thunderstorm: { text: "Tempestade", color: "purple" },
+      Drizzle: { text: "Chuviscando", color: "lightblue" },
+      Mist: { text: "Neblina", color: "lightgray" }
+    };
   
+    return weatherTypes[weatherMain] || { text: "", color: "black" };
+  }
 
   return (
     <>
@@ -89,10 +144,23 @@ export default function HomeLeftContainer() {
         </SearchBarSC>
 
         <WeatherStatusSC>
-          
+        {data?.weather && data.weather.length > 0 ? (
+          <>
+            <div>
+              <img src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].description}></img>
+              <p>{minTemp}{tempUnit}</p>
+            </div>
+            <p style={{ color: getWeatherDescriptionAndColor(data.weather[0].main).color }}>
+              {getWeatherDescriptionAndColor(data.weather[0].main).text}
+            </p>
+          </>
+        ) : (
+          <RotatingLines strokeColor="grey" strokeWidth="5" animationDuration="0.75" width="96" visible={true} />
+        )}
         </WeatherStatusSC>
 
         <DayStatusSC>
+          <Line />
           <p>{date}</p>
           <p>{time}</p>
         </DayStatusSC>
@@ -157,7 +225,6 @@ const SearchBarSC = styled.div`
   justify-content: center;
   width: 100%;
   margin-top: 50px;
-
   &:hover input {
     opacity: 0.8;
   }
@@ -171,7 +238,7 @@ const SearchBarSC = styled.div`
     border: none;
     border-radius: 24px;
     background: #EDEDEF;
-    box-shadow: 0px 24px 48px 0px rgba(49, 79, 124, 0.08);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     color: #424243;
     font-family: Montserrat;
     font-size: 18px;
@@ -192,8 +259,41 @@ const ButtonSC = styled.button`
 const WeatherStatusSC = styled.div`
   width: 80%;
   height: 25%;
-  background-color: yellow;
-  margin-top: 5%;
+  gap: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  > img {
+    user-select: none;
+  }
+  > p {
+  color: #EC6E4C;
+  font-family: 'Poppins', sans-serif;
+  font-size: 70px;
+  font-style: normal;
+  font-weight: 300;
+  }
+  }
+  p{
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 48px; 
+  }
+`;
+
+const Line = styled.div`
+  width: 100%;
+  height: 5px;
+  background: #EDEDED;
+  margin-bottom: 10%;
 `;
 
 const DayStatusSC = styled.div`
