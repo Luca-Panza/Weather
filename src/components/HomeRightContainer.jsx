@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { StyleSheetManager } from 'styled-components';
 import { useState, useContext } from "react" 
 
 import { AppContext } from "../context/AppContext";
@@ -6,7 +7,7 @@ import { AppContext } from "../context/AppContext";
 export default function HomeRightContainer() {
 
   const [activeTab, setActiveTab] = useState('today');
-  const { data, switchTemperature } = useContext(AppContext);
+  const { data, switchTemperature, switchDarkMode } = useContext(AppContext);
 
   const cityName = data?.name;
   const cityLat = data?.coord?.lat?.toFixed(2); 
@@ -23,13 +24,15 @@ export default function HomeRightContainer() {
   function msToMph(speedMs) {
     return speedMs * 2.23694;
   }
-  
+
   function celsiusToFahrenheit(tempCelsius) {
     return (tempCelsius * 9/5) + 32;
   }
 
   return (
-    <HomeRightContainerSC>
+    <>
+    <StyleSheetManager shouldForwardProp={(prop) => !['switchDarkMode'].includes(prop)}>
+    <HomeRightContainerSC switchDarkMode={switchDarkMode}>
 
       <TextSC>
         <TabText $isActive={activeTab === 'today'} onClick={() => setActiveTab('today')}>
@@ -42,9 +45,9 @@ export default function HomeRightContainer() {
 
       {activeTab === 'today' && (
         <>
-          <CityInfoSC>
+          <CityInfoSC switchDarkMode={switchDarkMode}>
             {cityName}
-            <CoordsSC>Lat: {cityLat} Long: {cityLon}</CoordsSC>
+            <CoordsSC switchDarkMode={switchDarkMode}>Lat: {cityLat} Long: {cityLon}</CoordsSC>
           </CityInfoSC>
 
           <WeatherInfoSC>
@@ -66,18 +69,21 @@ export default function HomeRightContainer() {
             </WeatherBox>
           </WeatherInfoSC>
 
-          <CoatStatusSC>
-            {minTemp <= 17 ? 'Sim, você deve levar um casaquinho!' : 'Não, você não deve levar um casaquinho!'}
+          <CoatStatusSC switchDarkMode={switchDarkMode}>
+            {minTempCelsius <= 17 ? 'Sim, você deve levar um casaquinho!' : 'Não, você não deve levar um casaquinho!'}
           </CoatStatusSC>
 
         </>
+        
       )}
 
-      <APIAttribution>
+      <APIAttribution switchDarkMode={switchDarkMode}>
         Dados fornecidos pela <APILink href="https://openweathermap.org/api" target="_blank">Open Weather API</APILink>
       </APIAttribution>
 
     </HomeRightContainerSC>
+    </StyleSheetManager>
+    </>
   )
 }
 
@@ -86,7 +92,7 @@ const HomeRightContainerSC = styled.div`
   flex-direction: column;
   width: 65%;
   height: 100%;
-  background-color: #EFEFEF;
+  background-color: ${(props) => props.switchDarkMode ? '#4F4F4F' : '#EFEFEF'};
 `;
 
 const TextSC = styled.div`
@@ -117,7 +123,7 @@ const CityInfoSC = styled.div`
   font-style: normal;
   font-weight: 300;
   line-height: 40px;
-  color: #222;
+  color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
   margin-top: 5%;
   margin-left: 5%;
   user-select: none;
@@ -136,7 +142,7 @@ const CoordsSC = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: 48px;
-  color: #222;
+  color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
   margin-top: 1%;
   margin-left: 1%;
   user-select: none;
@@ -199,12 +205,14 @@ const CoatStatusSC = styled.p`
 
 const APIAttribution = styled.div`
   font-family: 'Poppins', sans-serif;
+  user-select: none;
   font-size: 14px;
-  color: #222;
-  margin-top: 15%;
-  margin-left: 7%;
+  color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
+  margin-left: 5%;
   font-style: normal;
   font-weight: 400;
+  position: fixed;
+  bottom: 10%;   
 `;
 
 const APILink = styled.a`

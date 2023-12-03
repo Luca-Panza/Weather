@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { StyleSheetManager } from 'styled-components';
 import Switch from '@mui/material/Switch';
 import { RotatingLines } from 'react-loader-spinner';
 import { useState, useEffect, useContext, useRef } from 'react';
@@ -13,8 +14,7 @@ export default function HomeLeftContainer() {
   const [inputValue, setInputValue] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [switchDarkMode, setSwitchDarkMode] = useState(false);
-  const { data , setData, switchTemperature , setSwitchTemperature } = useContext(AppContext);
+  const { data , setData, switchTemperature , setSwitchTemperature, switchDarkMode, setSwitchDarkMode } = useContext(AppContext);
   const inputRef = useRef(null);
 
   const tempUnit = switchTemperature ? '°F' : '°C';
@@ -32,7 +32,6 @@ export default function HomeLeftContainer() {
   }, []);
 
   //Código para pegar a data e hora atual
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date();
@@ -51,7 +50,6 @@ export default function HomeLeftContainer() {
   }, []);
   
   //Código para pegar a cidade atual a partir das coordenadas
-
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(position => {
@@ -66,7 +64,6 @@ export default function HomeLeftContainer() {
   }, []);
 
   //Código para pegar a cidade atual a partir da coordenadas
-
   const getCityFromCoordinates = (latitude, longitude) => {
     const geocodingApiKey = import.meta.env.VITE_GEOCODING_API_KEY;
     const urlGeocoding = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${geocodingApiKey}`;
@@ -82,7 +79,6 @@ export default function HomeLeftContainer() {
   };
 
   //Código para enviar input usando enter
-
   function handleKeyDown(e) {
     if (e.key === 'Enter') {
       clickHandler(e);
@@ -90,7 +86,6 @@ export default function HomeLeftContainer() {
   }
 
   //Código para enviar input usando botão
-
   function clickHandler(e, cityName = null) {
     if (e) e.preventDefault();
   
@@ -100,11 +95,9 @@ export default function HomeLeftContainer() {
     setInputValue('');
   
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-    console.log(apiKey);
     const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${cityToSearch}&appid=${apiKey}&units=metric`;
     axios.get(urlWeather)
       .then(response => {
-        console.log(response.data);
         setData(response.data);
         console.log(data);
       })
@@ -129,14 +122,15 @@ export default function HomeLeftContainer() {
 
   return (
     <>
-      <HomeLeftContainerSC>
+    <StyleSheetManager shouldForwardProp={(prop) => !['switchDarkMode'].includes(prop)}>
+      <HomeLeftContainerSC switchDarkMode={switchDarkMode}>
 
-        <HeaderSC>
+        <HeaderSC switchDarkMode={switchDarkMode}>
           <img src={coatLogo} alt="Logo"></img>
           <h1>Levo um casaquinho?</h1>
         </HeaderSC>
 
-        <SearchBarSC>
+        <SearchBarSC switchDarkMode={switchDarkMode}>
           <input type="text" ref={inputRef} placeholder="Procure por uma cidade" onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown} value={inputValue} ></input>
           <ButtonSC type="submit" onClick={clickHandler}>
             <img src={searchIcon} alt="Search" />
@@ -159,13 +153,13 @@ export default function HomeLeftContainer() {
         )}
         </WeatherStatusSC>
 
-        <DayStatusSC>
+        <DayStatusSC switchDarkMode={switchDarkMode}>
           <Line />
           <p>{date}</p>
           <p>{time}</p>
         </DayStatusSC>
 
-        <SwitchSC>
+        <SwitchSC switchDarkMode={switchDarkMode}>
           <div>
             <Switch checked={switchTemperature} onChange={(e) => setSwitchTemperature(e.target.checked)}/>
             <label>°F</label>
@@ -176,11 +170,12 @@ export default function HomeLeftContainer() {
           </div>
         </SwitchSC>
 
-        <FooterSC>
+        <FooterSC switchDarkMode={switchDarkMode}>
           <p>Todos os direitos reservados. 2023.</p>
         </FooterSC>
         
       </HomeLeftContainerSC>
+      </StyleSheetManager>
     </>
   )      
 }
@@ -192,7 +187,7 @@ const HomeLeftContainerSC = styled.div`
   justify-content: flex-start;
   width: 35%;
   height: 100%;
-  background-color: #ffffff;
+  background-color: ${(props) => props.switchDarkMode ? '#1d1c19' : '#ffffff'};
 `;
 
 const HeaderSC = styled.header`
@@ -211,7 +206,7 @@ const HeaderSC = styled.header`
   }
 
   h1 {
-    color: #222;
+    color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
     width: 75%;
     font-family: 'Poppins', sans-serif;
     font-size: 3vw;
@@ -228,7 +223,6 @@ const SearchBarSC = styled.div`
   &:hover input {
     opacity: 0.8;
   }
-
   input {
     position: relative;
     width: 80%;
@@ -237,7 +231,7 @@ const SearchBarSC = styled.div`
     padding-left: 5%;
     border: none;
     border-radius: 24px;
-    background: #EDEDEF;
+    background: ${(props) => props.switchDarkMode ? '#292724' : '#EDEDEF'};
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     color: #424243;
     font-family: Montserrat;
@@ -304,7 +298,7 @@ const DayStatusSC = styled.div`
   width: 60%;
   height: 10%;
   text-align: center;
-  color: #222;
+  color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
   user-select: none;
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
@@ -328,7 +322,7 @@ const SwitchSC = styled.div`
   }
 
   label {
-    color: #222;
+    color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
     font-weight: 400;
@@ -341,11 +335,13 @@ const FooterSC = styled.footer`
   justify-content: center;
   width: 100%;
   height: 10%;
-  margin-top: 5%;
+
+  position: fixed;     
+  bottom: 8%;         
   user-select: none;
 
   p {
-    color: #222;
+    color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
     font-family: 'Poppins', sans-serif;
     font-size: 10px;
     font-weight: 400;
