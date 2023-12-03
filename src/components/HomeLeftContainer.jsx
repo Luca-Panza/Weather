@@ -89,17 +89,15 @@ export default function HomeLeftContainer() {
   function clickHandler(e, cityName = null) {
     if (e) e.preventDefault();
   
-    const cityToSearch = cityName || inputValue;
-  
-    console.log(cityToSearch);
+    const city = cityName || inputValue;
+
     setInputValue('');
   
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${cityToSearch}&appid=${apiKey}&units=metric`;
+    const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     axios.get(urlWeather)
       .then(response => {
         setData(response.data);
-        console.log(data);
       })
       .catch(error => {
         console.error('Erro ao obter a temperatura atual:', error);
@@ -154,7 +152,7 @@ export default function HomeLeftContainer() {
         </WeatherStatusSC>
 
         <DayStatusSC switchDarkMode={switchDarkMode}>
-          <Line />
+          <Line switchDarkMode={switchDarkMode}/>
           <p>{date}</p>
           <p>{time}</p>
         </DayStatusSC>
@@ -233,11 +231,16 @@ const SearchBarSC = styled.div`
     border-radius: 24px;
     background: ${(props) => props.switchDarkMode ? '#292724' : '#EDEDEF'};
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    color: #424243;
+    color: ${(props) => props.switchDarkMode ? '#EDEDEF' : '#424243'};
     font-family: Montserrat;
     font-size: 18px;
     font-weight: 500;
-    line-height: 24px;
+    @media (max-width: 920px) {
+    font-size: 12px;
+  }
+    @media (max-width: 600px) {
+    font-size: 10px; 
+  }
   }
 `;
 
@@ -248,6 +251,7 @@ const ButtonSC = styled.button`
   border: none;
   background: transparent;
   cursor: pointer;
+  
 `;
 
 const WeatherStatusSC = styled.div`
@@ -258,35 +262,50 @@ const WeatherStatusSC = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  @media (max-width: 800px) {
+    height: 15%;
+  }
   div{
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   > img {
+    width: 25%;
     user-select: none;
   }
   > p {
   color: #EC6E4C;
   font-family: 'Poppins', sans-serif;
-  font-size: 70px;
+  font-size: 50px;
   font-style: normal;
   font-weight: 300;
+  @media (max-width: 800px) {
+    font-size: 40px;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 30px; 
+  }
   }
   }
   p{
     font-family: 'Poppins', sans-serif;
-    font-size: 32px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 400;
-    line-height: 48px; 
+    user-select: none;
+    @media (max-width: 800px) {
+    font-size: 20px;
+    }
   }
 `;
 
 const Line = styled.div`
   width: 100%;
   height: 5px;
-  background: #EDEDED;
+  background: ${(props) => props.switchDarkMode ? '#292724' : '#EDEDED'};
   margin-bottom: 10%;
 `;
 
@@ -303,6 +322,9 @@ const DayStatusSC = styled.div`
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
   font-weight: 400;
+  @media (max-width: 600px) {
+    font-size: 15px; 
+  }
 `;
 
 const SwitchSC = styled.div`
@@ -326,6 +348,9 @@ const SwitchSC = styled.div`
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
     font-weight: 400;
+    @media (max-width: 600px) {
+    font-size: 10px; 
+  }
   }
 `;
 

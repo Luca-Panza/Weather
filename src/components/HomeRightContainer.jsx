@@ -1,12 +1,15 @@
 import styled from "styled-components"
+import axios from 'axios';
 import { StyleSheetManager } from 'styled-components';
-import { useState, useContext } from "react" 
+import { useState, useEffect, useContext } from "react"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
 
 import { AppContext } from "../context/AppContext";
 
 export default function HomeRightContainer() {
 
   const [activeTab, setActiveTab] = useState('today');
+  const [graphsData, setGraphsData] = useState({});
   const { data, switchTemperature, switchDarkMode } = useContext(AppContext);
 
   const cityName = data?.name;
@@ -29,27 +32,90 @@ export default function HomeRightContainer() {
     return (tempCelsius * 9/5) + 32;
   }
 
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
+    if (data?.coord?.lat && data?.coord?.lon) {
+      const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=${apiKey}`;
+      axios.get(urlForecast)
+        .then(response => {
+          setGraphsData(response.data);
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.error('Erro ao obter a temperatura dos próximos dias:', error);
+        });
+    } else {
+      console.log("Coordenadas não disponíveis");
+    }
+  }, [data]);
+
+  const formatDateTooltip = (dateTime) => {
+    const daysFull = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const date = new Date(dateTime);
+    const dayFull = daysFull[date.getDay()];
+    const formattedDate = `${dayFull}, ${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    return formattedDate;
+  };
+  
+  const formatDateAxis = (dateTime) => {
+    const daysShort = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+    const date = new Date(dateTime);
+    const dayShort = daysShort[date.getDay()];
+    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')} (${dayShort})`;
+    return formattedDate;
+  };
+
+  const processDataForChart = (data) => {
+    return data.list.map((item) => ({
+      date: formatDateAxis(item.dt_txt),
+      temperature: item.main.temp - 273.15,
+    }));
+  };
+
+  const generateTicks = (min, max) => {
+    const average = (min + max) / 2;
+    
+    const nearestTenBelowAverage = Math.floor(average / 10) * 10;
+    const nearestTenAboveAverage = Math.ceil(average / 10) * 10;
+    
+    const ticksArray = [
+      nearestTenBelowAverage - 10,
+      nearestTenBelowAverage,
+      nearestTenAboveAverage + 10,
+      nearestTenAboveAverage + 20
+    ];
+    
+    return ticksArray;
+  };
+
+  const tempsCelsius = graphsData.list?.map(item => item.main.temp - 273.15) || [];
+  const dataMin = Math.min(...tempsCelsius);
+  const dataMax = Math.max(...tempsCelsius);
+  const roundedDataMin = Math.floor(dataMin / 10) * 10;
+  const roundedDataMax = Math.ceil(dataMax / 10) * 10;
+
   return (
     <>
     <StyleSheetManager shouldForwardProp={(prop) => !['switchDarkMode'].includes(prop)}>
     <HomeRightContainerSC switchDarkMode={switchDarkMode}>
 
       <TextSC>
-        <TabText $isActive={activeTab === 'today'} onClick={() => setActiveTab('today')}>
+        <TabText $isActive={activeTab === 'today'} switchDarkMode={switchDarkMode} onClick={() => setActiveTab('today')}>
           Hoje
         </TabText>
-        <TabText $isActive={activeTab === 'nextDays'} onClick={() => setActiveTab('nextDays')}>
+        <TabText $isActive={activeTab === 'nextDays'} switchDarkMode={switchDarkMode} onClick={() => setActiveTab('nextDays')}>
           Próximos dias
         </TabText>
       </TextSC>
 
+      <CityInfoSC switchDarkMode={switchDarkMode}>
+        {cityName}
+        <CoordsSC switchDarkMode={switchDarkMode}>Lat: {cityLat} Long: {cityLon}</CoordsSC>
+      </CityInfoSC>
+
       {activeTab === 'today' && (
         <>
-          <CityInfoSC switchDarkMode={switchDarkMode}>
-            {cityName}
-            <CoordsSC switchDarkMode={switchDarkMode}>Lat: {cityLat} Long: {cityLon}</CoordsSC>
-          </CityInfoSC>
-
           <WeatherInfoSC>
             <WeatherBox>
               <WeatherTitle>Minima</WeatherTitle>
@@ -72,10 +138,43 @@ export default function HomeRightContainer() {
           <CoatStatusSC switchDarkMode={switchDarkMode}>
             {minTempCelsius <= 17 ? 'Sim, você deve levar um casaquinho!' : 'Não, você não deve levar um casaquinho!'}
           </CoatStatusSC>
-
-        </>
-        
+        </>       
       )}
+
+        {activeTab === 'nextDays' && (
+            <>
+            <MarginSC>
+              <NextDaysContainerSC switchDarkMode={switchDarkMode}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={processDataForChart(graphsData)}
+                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" stroke={switchDarkMode ? '#ffffff' : '#000000'} />
+                    <YAxis 
+                      stroke={switchDarkMode ? '#ffffff' : '#000000'}
+                      tick={{ fill: switchDarkMode ? '#ffffff' : '#000000' }}
+                      domain={[roundedDataMin => (Math.floor(roundedDataMin / 10) * 10), roundedDataMax => (Math.ceil(roundedDataMax / 10) * 10)]}
+                      ticks={generateTicks(roundedDataMin, roundedDataMax)}
+                      tickFormatter={value => `${value}°C`} 
+                    />
+                    <Tooltip 
+                      formatter={(value) => [`${value.toFixed(1)} °C`, 'Temperatura']}
+                      labelFormatter={(label) => formatDateTooltip(label)}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="temperature"
+                      stroke="#292724"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </NextDaysContainerSC>
+            </MarginSC>
+            </>
+          )}
 
       <APIAttribution switchDarkMode={switchDarkMode}>
         Dados fornecidos pela <APILink href="https://openweathermap.org/api" target="_blank">Open Weather API</APILink>
@@ -92,7 +191,7 @@ const HomeRightContainerSC = styled.div`
   flex-direction: column;
   width: 65%;
   height: 100%;
-  background-color: ${(props) => props.switchDarkMode ? '#4F4F4F' : '#EFEFEF'};
+  background-color: ${(props) => props.switchDarkMode ? '#282723' : '#EFEFEF'};
 `;
 
 const TextSC = styled.div`
@@ -104,7 +203,7 @@ const TextSC = styled.div`
 const TabText = styled.span`
   display: inline;
   cursor: pointer;
-  color: ${props => props.$isActive ? '#000' : '#aaa'};
+  color: ${props => props.$isActive ? (props.switchDarkMode ? '#fff' : '#000') : '#aaa'};
   margin-right: 3%;
   font-family: 'Poppins', sans-serif;
   font-size: 30px;
@@ -114,6 +213,9 @@ const TabText = styled.span`
   user-select: none;
   &:hover {
     color: #000;
+  }
+  @media (max-width: 620px) {
+    font-size: 18px; 
   }
 `;
 
@@ -131,7 +233,7 @@ const CityInfoSC = styled.div`
     font-size: 60px;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 620px) {
     font-size: 40px; 
   }
 `;
@@ -227,5 +329,24 @@ const APILink = styled.a`
   }
 `;
 
+const MarginSC = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+`;
 
 
+  const NextDaysContainerSC = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${props => props.switchDarkMode ? '#808080' : '#ffffff'};
+  border: 1px solid #D8D8D8;
+  user-select: none;
+  width: 80%;
+  height: 90%;
+  border-radius:10px;
+  margin-top: 2%;
+`;
