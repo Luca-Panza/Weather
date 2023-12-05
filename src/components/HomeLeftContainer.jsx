@@ -19,10 +19,10 @@ export default function HomeLeftContainer() {
 
   const tempUnit = switchTemperature ? '°F' : '°C';
   const minTempCelsius = data?.main?.temp_min;
-  const minTemp = minTempCelsius !== undefined ? (switchTemperature ? celsiusToFahrenheit(minTempCelsius).toFixed(1) : minTempCelsius.toFixed(1)) : null;
+  const minTemp = minTempCelsius !== undefined ? (switchTemperature ? tempCelsiusToFahrenheit(minTempCelsius).toFixed(1) : minTempCelsius.toFixed(1)) : null;
   
   //Função para converter Celsius para Fahrenheit
-  function celsiusToFahrenheit(tempCelsius) {
+  function tempCelsiusToFahrenheit(tempCelsius) {
     return (tempCelsius * 9/5) + 32;
   }
 
@@ -135,7 +135,7 @@ export default function HomeLeftContainer() {
           </ButtonSC>
         </SearchBarSC>
 
-        <WeatherStatusSC>
+        <WeatherStatusSC switchDarkMode={switchDarkMode}>
         {data?.weather && data.weather.length > 0 ? (
           <>
             <div>
@@ -272,6 +272,7 @@ const WeatherStatusSC = styled.div`
   justify-content: center;
   user-select: none;
   > img {
+    filter: ${props => props.switchDarkMode ? 'drop-shadow(4mm 4mm 6mm rgba(128, 128, 128, .7))' : 'drop-shadow(4mm 4mm 6mm rgba(0, 0, 0, .7))' };
     width: 25%;
     user-select: none;
   }
