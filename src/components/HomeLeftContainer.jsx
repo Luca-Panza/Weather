@@ -5,9 +5,11 @@ import { RotatingLines } from 'react-loader-spinner';
 import { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 
-import coatLogo from "../assets/coat.png"
 import searchIcon from "../assets/search.svg"
 import { AppContext } from "../context/AppContext";
+
+import HeaderContainer from "./HeaderContainer";
+import FooterContainer from "./FooterContainer";
 
 export default function HomeLeftContainer() {
 
@@ -106,13 +108,13 @@ export default function HomeLeftContainer() {
 
   function getWeatherDescriptionAndColor(weatherMain) {
     const weatherTypes = {
-      Clear: { text: "Céu aberto", color: "orange" },
-      Clouds: { text: "Nublado", color: "gray" },
-      Rain: { text: "Chovendo", color: "blue" },
-      Snow: { text: "Nevando", color: "lightgray" },
-      Thunderstorm: { text: "Tempestade", color: "purple" },
-      Drizzle: { text: "Chuviscando", color: "lightblue" },
-      Mist: { text: "Neblina", color: "lightgray" }
+      Clear: { text: "Céu aberto", color: "#FFA07A" },
+      Clouds: { text: "Nublado", color: "#B0C4DE" },
+      Rain: { text: "Chovendo", color: "#ADD8E6" },
+      Snow: { text: "Nevando", color: "#D3D3D3" },
+      Thunderstorm: { text: "Tempestade", color: "#9370DB" },
+      Drizzle: { text: "Chuviscando", color: "#B0E0E6" },
+      Mist: { text: "Neblina", color: "#F5F5F5" }
     };
   
     return weatherTypes[weatherMain] || { text: "", color: "black" };
@@ -123,10 +125,7 @@ export default function HomeLeftContainer() {
     <StyleSheetManager shouldForwardProp={(prop) => !['switchDarkMode'].includes(prop)}>
       <HomeLeftContainerSC switchDarkMode={switchDarkMode}>
 
-        <HeaderSC switchDarkMode={switchDarkMode}>
-          <img src={coatLogo} alt="Logo"></img>
-          <h1>Levo um casaquinho?</h1>
-        </HeaderSC>
+      <HeaderContainer/>
 
         <SearchBarSC switchDarkMode={switchDarkMode}>
           <input type="text" ref={inputRef} placeholder="Procure por uma cidade" onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyDown} value={inputValue} ></input>
@@ -168,9 +167,7 @@ export default function HomeLeftContainer() {
           </div>
         </SwitchSC>
 
-        <FooterSC switchDarkMode={switchDarkMode}>
-          <p>Todos os direitos reservados. 2023.</p>
-        </FooterSC>
+        <FooterContainer/>
         
       </HomeLeftContainerSC>
       </StyleSheetManager>
@@ -186,30 +183,6 @@ const HomeLeftContainerSC = styled.div`
   width: 35%;
   height: 100%;
   background-color: ${(props) => props.switchDarkMode ? '#1d1c19' : '#ffffff'};
-`;
-
-const HeaderSC = styled.header`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: auto;
-  margin-top: 25px;
-  user-select: none;
-
-  img {
-    object-fit: contain;
-    width: 20%;
-    margin-right: 3%;
-    margin-left: 6%;
-  }
-
-  h1 {
-    color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
-    width: 75%;
-    font-family: 'Poppins', sans-serif;
-    font-size: 3vw;
-    font-weight: 600;
-  }
 `;
 
 const SearchBarSC = styled.div`
@@ -352,25 +325,5 @@ const SwitchSC = styled.div`
     @media (max-width: 600px) {
     font-size: 10px; 
   }
-  }
-`;
-
-const FooterSC = styled.footer`
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
-  height: 10%;
-
-  position: fixed;     
-  bottom: 8%;         
-  user-select: none;
-
-  p {
-    color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
-    font-family: 'Poppins', sans-serif;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 48px;
   }
 `;

@@ -1,12 +1,11 @@
-import styled from "styled-components"
 import axios from 'axios';
-import { useState, useEffect, useContext } from "react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
+import { useState, useEffect, useContext } from "react";
+import styled from "styled-components";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { AppContext } from "../context/AppContext";
 
 export default function NextDaysChart() {
-
   const [graphsData, setGraphsData] = useState({});
   const { data, switchTemperature, switchDarkMode } = useContext(AppContext);
 
@@ -81,39 +80,39 @@ export default function NextDaysChart() {
 
   return (
     <>
-    <MarginSC>
-    <NextDaysContainerSC switchDarkMode={switchDarkMode}>
-      <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={processedData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" stroke={switchDarkMode ? '#ffffff' : '#000000'} />
-          <YAxis 
-            stroke={switchDarkMode ? '#ffffff' : '#000000'}
-            tick={{ fill: switchDarkMode ? '#ffffff' : '#000000' }}
-            domain={[roundedDataMin => (Math.floor(roundedDataMin / 10) * 10), roundedDataMax => (Math.ceil(roundedDataMax / 10) * 10)]}
-            ticks={ticks}
-            tickFormatter={(value) => `${value.toFixed(1)} ${switchTemperature ? '°F' : '°C'}`}  
-          />
-          <Tooltip 
-            formatter={(value) => [`${value.toFixed(1)} ${switchTemperature ? '°F' : '°C'}`, 'Temperatura']}
-            labelFormatter={(label) => formatDateTooltip(label)}
-          />
-          <Line
-            type="monotone"
-            dataKey="temperature"
-            stroke="#292724"
-            activeDot={{ r: 8 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </NextDaysContainerSC>
-  </MarginSC>
-  </>
+      <MarginSC>
+        <NextDaysContainerSC switchDarkMode={switchDarkMode}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={processedData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" stroke={switchDarkMode ? '#ffffff' : '#000000'} />
+              <YAxis 
+                stroke={switchDarkMode ? '#ffffff' : '#000000'}
+                tick={{ fill: switchDarkMode ? '#ffffff' : '#000000' }}
+                domain={[roundedDataMin => (Math.floor(roundedDataMin / 10) * 10), roundedDataMax => (Math.ceil(roundedDataMax / 10) * 10)]}
+                ticks={ticks}
+                tickFormatter={(value) => `${value.toFixed(1)} ${switchTemperature ? '°F' : '°C'}`}  
+              />
+              <Tooltip 
+                formatter={(value) => [`${value.toFixed(1)} ${switchTemperature ? '°F' : '°C'}`, 'Temperatura']}
+                labelFormatter={(label) => formatDateTooltip(label)}
+              />
+              <Line
+                type="monotone"
+                dataKey="temperature"
+                stroke="#292724"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </NextDaysContainerSC>
+      </MarginSC>
+    </>
   );
-};
+}
 
 const MarginSC = styled.div`
   display: flex;
@@ -123,7 +122,7 @@ const MarginSC = styled.div`
   height: 50%;
 `;
 
-  const NextDaysContainerSC = styled.div`
+const NextDaysContainerSC = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -132,6 +131,6 @@ const MarginSC = styled.div`
   user-select: none;
   width: 80%;
   height: 90%;
-  border-radius:10px;
+  border-radius: 10px;
   margin-top: 2%;
 `;

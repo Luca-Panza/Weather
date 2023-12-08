@@ -11,6 +11,7 @@ const AppProvider = ({ children }) => {
   const [switchDarkMode, setSwitchDarkMode] = useState(
     localStorage.getItem("switchDarkMode") === "true"
   );
+  const [activeTab, setActiveTab] = useState('today');
 
   useEffect(() => {
     localStorage.setItem("switchTemperature", switchTemperature);
@@ -18,7 +19,7 @@ const AppProvider = ({ children }) => {
   }, [switchTemperature, switchDarkMode]);
 
   return (
-    <AppContext.Provider value={{ data, setData, switchTemperature, setSwitchTemperature, switchDarkMode, setSwitchDarkMode }}>
+    <AppContext.Provider value={{ data, setData, switchTemperature, setSwitchTemperature, switchDarkMode, setSwitchDarkMode, activeTab, setActiveTab }}>
       {children}
     </AppContext.Provider>
   );
