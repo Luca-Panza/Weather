@@ -2,11 +2,11 @@ import { useContext } from "react";
 import styled from "styled-components";
 import { StyleSheetManager } from 'styled-components';
 
-import APIAttribution from "./ApiAttributionContainer";
-import NextDaysChart from "./ChartContainer";
-import CityInfo from "./CityInfoContainer";
-import TodayContainer from "./TodayContainer";
-import WeatherTab from "./WeatherTabContainer";
+import APIAttribution from "../components/ApiAttributionContainer";
+import NextDaysChart from "../components/ChartContainer";
+import CityInfo from "../components/CityInfoContainer";
+import TodayContainer from "../components/TodayContainer";
+import WeatherTab from "../components/WeatherTabContainer";
 import { AppContext } from "../context/AppContext";
 
 export default function HomeRightContainer() {

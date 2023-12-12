@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
-import HomeLeftContainer from "../components/HomeLeftContainer"
-import HomeRightContainer from "../components/HomeRightContainer"
+import HomeLeftContainer from "../patterns/HomeLeftContainer"
+import HomeRightContainer from "../patterns/HomeRightContainer"
 
 export default function HomePage() {
 

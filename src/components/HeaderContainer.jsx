@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import styled from "styled-components"
 import coatLogo from "../assets/coat.png"
+
 import { AppContext } from "../context/AppContext";
 
 export default function HeaderContainer() {
