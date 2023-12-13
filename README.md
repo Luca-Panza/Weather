@@ -65,7 +65,7 @@ After setting up the API keys, you can start the server:
 npm start
 ```
 
-Or to test on a production server.
+Or to test on a development server.
 
 ```
 npm run dev
