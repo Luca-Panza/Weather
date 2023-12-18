@@ -1,7 +1,8 @@
 import { useContext } from 'react';
-import styled from "styled-components"
-import coatLogo from "../assets/coat.png"
+import styled, { keyframes } from "styled-components";
+import 'animate.css';
 
+import coatLogo from "../assets/coat.png";
 import { AppContext } from "../context/AppContext";
 
 export default function HeaderContainer() {
@@ -9,13 +10,22 @@ export default function HeaderContainer() {
 
   return (
     <>
-        <HeaderSC switchDarkMode={switchDarkMode}>
-          <img src={coatLogo} alt="Logo"></img>
-          <h1>Levo um casaquinho?</h1>
-        </HeaderSC>
+      <HeaderSC switchDarkMode={switchDarkMode}>
+        <img src={coatLogo} alt="Logo"></img>
+        <h1>Levo um casaquinho?</h1>
+      </HeaderSC>
     </>
   );
 }
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 const HeaderSC = styled.header`
   display: flex;
@@ -24,6 +34,7 @@ const HeaderSC = styled.header`
   height: auto;
   margin-top: 25px;
   user-select: none;
+  animation: ${fadeIn} 1s ease-out;
 
   img {
     object-fit: contain;
