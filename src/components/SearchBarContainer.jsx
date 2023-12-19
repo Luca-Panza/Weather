@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import searchIcon from "../assets/search.svg";
 import { AppContext } from "../context/AppContext";
@@ -38,8 +39,15 @@ export default function SearchBarContainer() {
         clickHandler(null, city);
       })
       .catch(error => {
-        console.error('Erro ao obter nome da cidade:', error);
-      });
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Erro ao obter a temperatura atual.',
+          confirmButtonText: 'Ok',
+          background: switchDarkMode ? '#2d2d2d' : '#fff',
+          color: switchDarkMode ? '#fff' : '#2d2d2d',
+          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+        });
+    });
   };
 
   const handleKeyDown = e => {
@@ -60,7 +68,14 @@ export default function SearchBarContainer() {
         setData(response.data);
       })
       .catch(error => {
-        console.error('Erro ao obter a temperatura atual:', error);
+        Swal.fire({
+          title: 'Cidade não encontrada',
+          text: 'Não foi possível encontrar a cidade. Tente digitar novamente.',
+          confirmButtonText: 'Ok',
+          background: switchDarkMode ? '#2d2d2d' : '#fff',
+          color: switchDarkMode ? '#fff' : '#2d2d2d',
+          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+        });
       });
   };
 
@@ -106,6 +121,7 @@ const SearchBarSC = styled.div`
     font-family: Montserrat;
     font-size: 18px;
     font-weight: 500;
+    user-select: none;
     @media (max-width: 920px) {
       font-size: 12px;
     }

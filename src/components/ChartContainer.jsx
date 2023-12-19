@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
+import Swal from 'sweetalert2';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { AppContext } from "../context/AppContext";
@@ -21,8 +22,15 @@ export default function NextDaysChart() {
           setGraphsData(response.data);
         })
         .catch(error => {
-          console.error('Erro ao obter a temperatura dos próximos dias:', error);
-        });
+          Swal.fire({
+            title: 'Erro!',
+            text: 'Erro ao obter a temperatura dos próximos dias.',
+            confirmButtonText: 'Ok',
+            background: switchDarkMode ? '#2d2d2d' : '#fff',
+            color: switchDarkMode ? '#fff' : '#2d2d2d',
+            confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+          });
+      });
     }
   }, [data]);
 

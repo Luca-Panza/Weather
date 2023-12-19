@@ -20,7 +20,8 @@
     "react-loader-spinner": "^5.4.5",
     "react-router-dom": "^6.20.0",
     "recharts": "^2.10.3",
-    "styled-components": "^6.1.1"
+    "styled-components": "^6.1.1",
+    "sweetalert2": "^11.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
