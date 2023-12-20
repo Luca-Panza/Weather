@@ -21,6 +21,8 @@ Deployment on Render: <a href="https://weather-coral-chi.vercel.app/" target="_b
 - React
 - JavaScript
 - Styled Components
+- Animate.css
+- SweetAlert2
 - Recharts
 - OpenWeatherMap API
 - OpenCage Data API
