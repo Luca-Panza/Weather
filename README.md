@@ -1,4 +1,4 @@
-# <p align = "center"> Weather </p>
+# <p align = "center">Levo um Casaquinho?</p>
 
 <p align="center">
    <img width=176px; src="./src/assets/coat.png"/>
@@ -6,17 +6,18 @@
 
 <p align = "center">
    <img src="https://img.shields.io/badge/author-Luca_Panza-4dae71?style=flat-square" />
-   <img src="https://img.shields.io/github/languages/count/Luca-Panza/projeto24-weather?color=4dae71&style=flat-square" />
+   <img src="https://img.shields.io/github/languages/count/Luca-Panza/Weather?color=4dae71&style=flat-square" />
 </p>
 
+## :clipboard: Description
 
-##  :clipboard: Description
-Weather is a web application designed to provide real-time weather information and forecasts for the upcoming days. Customized to the user's location, it displays data such as current, maximum, and minimum temperatures, along with guidance on whether to wear a jacket based on the weather conditions. The application, with its user-friendly interface, aims to simplify the decision-making process for users planning outdoor activities or trips, ensuring they are appropriately dressed for the weather.
+"Levo um Casaquinho?" is a PT-BR web application designed to provide real-time weather information and forecasts for the upcoming days. Customized to the user's location, it displays data such as current, maximum, and minimum temperatures, along with guidance on whether to wear a jacket based on the weather conditions. The application, with its user-friendly interface, aims to simplify the decision-making process for users planning outdoor activities or trips, ensuring they are appropriately dressed for the weather.
 
-Deployment on Render: <a href="https://weather-coral-chi.vercel.app/" target="_blank">Weather Deploy</a>
-***
+Deployment on Render: <a href="https://weather-coral-chi.vercel.app/" target="_blank">Levo um Casaquinho?</a>
 
-## :computer:	 Technologies and Concepts
+---
+
+## :computer: Technologies and Concepts
 
 - React
 - JavaScript
@@ -27,7 +28,7 @@ Deployment on Render: <a href="https://weather-coral-chi.vercel.app/" target="_b
 - OpenWeatherMap API
 - OpenCage Data API
 
-***
+---
 
 ## 🏁 Running the application
 
@@ -36,7 +37,7 @@ Make sure you have the latest stable version of [Node.js](https://nodejs.org/en/
 First, clone this repository on your machine:
 
 ```
-git clone https://github.com/Luca-Panza/projeto24-weather
+git clone https://github.com/Luca-Panza/Weather
 ```
 
 Then, navigate to the project folder and install the dependencies with the following command:
@@ -55,8 +56,8 @@ Once you have the keys, proceed with the setup:
 1. Locate the `.env.example` file in the project directory.
 2. Create a new file in the same directory and name it `.env`.
 3. Open the `.env.example` file. You will see example entries for the required API keys:
-    - `VITE_WEATHER_API_KEY=YOUR_OPENWEATHERMAP_API_KEY`
-    - `VITE_GEOCODING_API_KEY=YOUR_OPENCAGE_DATA_API_KEY`
+   - `VITE_WEATHER_API_KEY=YOUR_OPENWEATHERMAP_API_KEY`
+   - `VITE_GEOCODING_API_KEY=YOUR_OPENCAGE_DATA_API_KEY`
 4. Replace `YOUR_OPENWEATHERMAP_API_KEY` with your actual OpenWeatherMap API key.
 5. Replace `YOUR_OPENCAGE_DATA_API_KEY` with your actual OpenCage Data API key.
 6. Copy these entries with your actual keys into the `.env` file you created.

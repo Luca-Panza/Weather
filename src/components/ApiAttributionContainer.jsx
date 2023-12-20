@@ -24,7 +24,7 @@ const APIAttributionSC = styled.div`
   font-style: normal;
   font-weight: 400;
   position: fixed;
-  bottom: 10%;   
+  bottom: 2%;   
 `;
 
 const APILink = styled.a`

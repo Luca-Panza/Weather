@@ -22,17 +22,17 @@ export default function CityInfo() {
 
 const CityInfoSC = styled.div`
   font-family: 'Poppins', sans-serif;
-  font-size: 70px;
+  font-size: 60px;
   font-style: normal;
   font-weight: 300;
-  line-height: 40px;
+  line-height: 60px;
   color: ${(props) => props.switchDarkMode ? '#ffffff' : '#222'};
   margin-top: 5%;
   margin-left: 5%;
   user-select: none;
 
   @media (max-width: 800px) {
-    font-size: 60px;
+    font-size: 50px;
   }
 
   @media (max-width: 620px) {

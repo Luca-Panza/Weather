@@ -25,23 +25,16 @@ export default function NextDaysChart() {
           Swal.fire({
             title: 'Erro!',
             text: 'Erro ao obter a temperatura dos próximos dias.',
+            icon: "error",
             confirmButtonText: 'Ok',
             background: switchDarkMode ? '#2d2d2d' : '#fff',
             color: switchDarkMode ? '#fff' : '#2d2d2d',
-            confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+            confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7066e0'
           });
       });
     }
   }, [data]);
 
-  const formatDateTooltip = (dateTime) => {
-    const daysFull = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    const date = new Date(dateTime);
-    const dayFull = daysFull[date.getDay()];
-    const formattedDate = `${dayFull}, ${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-    return formattedDate;
-  };
-  
   const formatDateAxis = (dateTime) => {
     const daysShort = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
     const date = new Date(dateTime);
@@ -106,7 +99,7 @@ export default function NextDaysChart() {
               />
               <Tooltip 
                 formatter={(value) => [`${value.toFixed(1)} ${switchTemperature ? '°F' : '°C'}`, 'Temperatura']}
-                labelFormatter={(label) => formatDateTooltip(label)}
+                labelFormatter={(label) => (label)}
               />
               <Line
                 type="monotone"

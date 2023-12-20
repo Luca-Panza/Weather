@@ -23,7 +23,7 @@ const FooterSC = styled.footer`
   height: 10%;
 
   position: fixed;     
-  bottom: 8%;         
+  bottom: 0%;         
   user-select: none;
 
   p {

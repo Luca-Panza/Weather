@@ -68,7 +68,7 @@ const WeatherStatusSC = styled.div`
     justify-content: center;
     user-select: none;
     > img {
-      filter: ${props => props.switchDarkMode ? 'drop-shadow(4mm 4mm 6mm rgba(128, 128, 128, .7))' : 'drop-shadow(4mm 4mm 6mm rgba(0, 0, 0, .7))' };
+      filter: drop-shadow(0px 0px 5px #777);
       width: 25%;
       user-select: none;
     }

@@ -22,7 +22,15 @@ export default function SearchBarContainer() {
         const { latitude, longitude } = position.coords;
         getCityFromCoordinates(latitude, longitude);
       }, error => {
-        console.error("Erro ao obter localização", error);
+        Swal.fire({
+          title: 'Geolocalização negada',
+          text: 'A permissão de localização é necessária para obter a previsão do tempo para sua área automaticamente.',
+          icon: "warning",
+          confirmButtonText: 'Ok',
+          background: switchDarkMode ? '#2d2d2d' : '#fff',
+          color: switchDarkMode ? '#fff' : '#2d2d2d',
+          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7066e0'
+        });
       });
     } else {
       console.log("Geolocalização não está disponível");
@@ -42,10 +50,11 @@ export default function SearchBarContainer() {
         Swal.fire({
           title: 'Erro!',
           text: 'Erro ao obter a temperatura atual.',
+          icon: "error",
           confirmButtonText: 'Ok',
           background: switchDarkMode ? '#2d2d2d' : '#fff',
           color: switchDarkMode ? '#fff' : '#2d2d2d',
-          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7066e0'
         });
     });
   };
@@ -71,10 +80,11 @@ export default function SearchBarContainer() {
         Swal.fire({
           title: 'Cidade não encontrada',
           text: 'Não foi possível encontrar a cidade. Tente digitar novamente.',
+          icon: "error",
           confirmButtonText: 'Ok',
           background: switchDarkMode ? '#2d2d2d' : '#fff',
           color: switchDarkMode ? '#fff' : '#2d2d2d',
-          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7cd1f9'
+          confirmButtonColor: switchDarkMode ? '#4e4e4e' : '#7066e0'
         });
       });
   };
@@ -104,6 +114,7 @@ const SearchBarSC = styled.div`
   justify-content: center;
   width: 100%;
   margin-top: 50px;
+  user-select: none;
   &:hover input {
     opacity: 0.8;
   }
@@ -121,7 +132,6 @@ const SearchBarSC = styled.div`
     font-family: Montserrat;
     font-size: 18px;
     font-weight: 500;
-    user-select: none;
     @media (max-width: 920px) {
       font-size: 12px;
     }
