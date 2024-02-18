@@ -13,7 +13,7 @@
 
 "Levo um Casaquinho?" is a PT-BR web application designed to provide real-time weather information and forecasts for the upcoming days. Customized to the user's location, it displays data such as current, maximum, and minimum temperatures, along with guidance on whether to wear a jacket based on the weather conditions. The application, with its user-friendly interface, aims to simplify the decision-making process for users planning outdoor activities or trips, ensuring they are appropriately dressed for the weather.
 
-Deployment on Render: <a href="https://weather-coral-chi.vercel.app/" target="_blank">Levo um Casaquinho?</a>
+Deployment on Vercel: <a href="https://weather-coral-chi.vercel.app/" target="_blank">Levo um Casaquinho?</a>
 
 ---
 
